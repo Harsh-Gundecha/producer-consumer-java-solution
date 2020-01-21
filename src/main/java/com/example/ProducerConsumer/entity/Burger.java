@@ -1,10 +1,14 @@
 package com.example.ProducerConsumer.entity;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class Burger extends FastFood {
     private String size;
 }
