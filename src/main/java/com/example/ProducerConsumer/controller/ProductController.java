@@ -3,13 +3,12 @@ package com.example.ProducerConsumer.controller;
 import com.example.ProducerConsumer.entity.Burger;
 import com.example.ProducerConsumer.entity.FastFood;
 import com.example.ProducerConsumer.entity.Pizza;
-import com.example.ProducerConsumer.service.ProcessFastFood;
-import org.apache.tomcat.jni.Time;
+import com.example.ProducerConsumer.resource.OrderQueue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Random;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @CrossOrigin
@@ -17,39 +16,35 @@ import java.util.Random;
 public class ProductController {
 
     @Autowired
-    private ProcessFastFood processFastFood;
+    private OrderQueue orderQueue;
 
     private void setId(FastFood fastFood){
-        Random random = new Random();
-        long id = random.nextLong();
-        while(id<0)
-            id = random.nextLong();
-        fastFood.setId(id);
+        fastFood.setId((long)(Math.random() * Long.MAX_VALUE));
     }
 
     @PostMapping("/burger")
     ResponseEntity<Boolean> postOrder(@RequestBody Burger burger){
         setId(burger);
-        return ResponseEntity.ok(processFastFood.addOrder(burger));
+        return ResponseEntity.ok(orderQueue.getOrderQueue().add(burger));
     }
 
     @PostMapping("/pizza")
     ResponseEntity<Boolean> postOrder(@RequestBody Pizza pizza){
         setId(pizza);
-        return ResponseEntity.ok(processFastFood.addOrder(pizza));
+        return ResponseEntity.ok(orderQueue.getOrderQueue().add(pizza));
     }
 
     @GetMapping
     ResponseEntity<?> getOrder(){
-        Object fastFood = processFastFood.getOrder();
-        if(fastFood == null)
-            return (ResponseEntity<?>) ResponseEntity.notFound();
-        return ResponseEntity.ok(fastFood);
+        if(orderQueue.getOrderQueue().isEmpty())
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Actor Not Found");
+        return ResponseEntity.ok(orderQueue.getOrderQueue().remove());
     }
 
-    @GetMapping("/dummy")
-    ResponseEntity<FastFood> NoBodyGonnaCallMe(){
-        FastFood fastFood = Burger.builder().size("2").build();
-        return ResponseEntity.ok(fastFood);
-    }
+//    @GetMapping("/dummy")
+//    ResponseEntity<FastFood> NoBodyGonnaCallMe(){
+//        FastFood fastFood = Burger.builder().size("2").build();
+//        return ResponseEntity.ok(fastFood);
+//    }
 }
