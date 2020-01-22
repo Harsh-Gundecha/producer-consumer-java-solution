@@ -4,6 +4,7 @@ import com.example.ProducerConsumer.entity.Burger;
 import com.example.ProducerConsumer.entity.FastFood;
 import com.example.ProducerConsumer.entity.Pizza;
 import com.example.ProducerConsumer.resource.OrderQueue;
+import com.example.ProducerConsumer.service.OrderQueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class ProductController {
 
     @Autowired
-    private OrderQueue orderQueue;
+    private OrderQueueService orderQueueService;
 
     private void setId(FastFood fastFood){
         fastFood.setId((long)(Math.random() * Long.MAX_VALUE));
@@ -25,21 +26,21 @@ public class ProductController {
     @PostMapping("/burger")
     ResponseEntity<Boolean> postOrder(@RequestBody Burger burger){
         setId(burger);
-        return ResponseEntity.ok(orderQueue.getOrderQueue().add(burger));
+        return ResponseEntity.ok(orderQueueService.postOrder(burger));
     }
 
     @PostMapping("/pizza")
     ResponseEntity<Boolean> postOrder(@RequestBody Pizza pizza){
         setId(pizza);
-        return ResponseEntity.ok(orderQueue.getOrderQueue().add(pizza));
+        return ResponseEntity.ok(orderQueueService.postOrder(pizza));
     }
 
     @GetMapping
     ResponseEntity<?> getOrder(){
-        if(orderQueue.getOrderQueue().isEmpty())
+        if(!orderQueueService.doesOrderExist())
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Actor Not Found");
-        return ResponseEntity.ok(orderQueue.getOrderQueue().remove());
+        return ResponseEntity.ok(orderQueueService.getOrder());
     }
 
 //    @GetMapping("/dummy")
