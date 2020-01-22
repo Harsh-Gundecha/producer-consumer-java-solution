@@ -10,5 +10,10 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class Burger extends FastFood {
-    private String size;
+    enum BurgerSize {
+        SMALL,
+        MEDIUM,
+        LARGE
+    }
+    private BurgerSize size;
 }

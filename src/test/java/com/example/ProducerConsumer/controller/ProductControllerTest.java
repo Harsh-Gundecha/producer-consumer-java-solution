@@ -54,7 +54,7 @@ public class ProductControllerTest {
                         .content("{\n" +
                                 "    \"name\": \"cheesy burger\",\n" +
                                 "    \"isVeg\": \"true\",\n" +
-                                "    \"size\": \"jumbo\"\n" +
+                                "    \"size\": \"LARGE\"\n" +
                                 "}")
                 )
                         .andReturn()
